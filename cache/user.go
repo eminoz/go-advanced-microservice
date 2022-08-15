@@ -3,6 +3,7 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/eminoz/go-redis-project/model"
 	"github.com/go-redis/redis/v8"
 )
@@ -11,6 +12,7 @@ type IUserCache interface {
 	SaveUserByEmail(user model.UserDal) error
 	GetUserByEmail(email string) model.UserDal
 	GetAllUser() []model.UserDal
+	DeleteUserByEmail(email string)
 }
 
 type UserCache struct {
@@ -57,4 +59,10 @@ func (c *UserCache) GetAllUser() []model.UserDal {
 		user = append(user, u)
 	}
 	return user
+}
+
+func (c UserCache) DeleteUserByEmail(email string) {
+	ctx := context.TODO()
+	del := c.Redis.HDel(ctx, "users", email)
+	fmt.Println(del.Val())
 }

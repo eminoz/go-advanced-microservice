@@ -8,6 +8,7 @@ import (
 type IUserController interface {
 	CreateUser(ctx *fiber.Ctx) error
 	GetUserByEmail(ctx *fiber.Ctx) error
+	DeleteUserByEmail(ctx *fiber.Ctx) error
 }
 type UserController struct {
 	UserController service.IUserService
@@ -27,5 +28,13 @@ func (u UserController) GetUserByEmail(ctx *fiber.Ctx) error {
 func (u UserController) GetAllUser(ctx *fiber.Ctx) error {
 	user := u.UserController.GetAllUser(ctx)
 	return ctx.JSON(user)
+
+}
+func (u UserController) DeleteUserByEmail(ctx *fiber.Ctx) error {
+	email, err := u.UserController.DeleteUserByEmail(ctx)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(email)
 
 }

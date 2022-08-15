@@ -18,5 +18,6 @@ func Setup() *fiber.App {
 	f.Post("/createUser", controller.CreateUser)
 	f.Get("/getUserByEmail/:email", controller.GetUserByEmail)
 	f.Get("/getAllUser", controller.GetAllUser)
+	f.Delete("/deleteUserByEmail/:email", controller.DeleteUserByEmail)
 	return f
 }

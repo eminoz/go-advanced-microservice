@@ -11,6 +11,7 @@ type IUserService interface {
 	CreateUser(ctx *fiber.Ctx) (interface{}, error)
 	GetUserByEmail(ctx *fiber.Ctx) model.UserDal
 	GetAllUser(ctx *fiber.Ctx) []model.UserDal
+	DeleteUserByEmail(ctx *fiber.Ctx) (map[string]interface{}, error)
 }
 
 type UserService struct {
@@ -45,4 +46,21 @@ func (u UserService) GetAllUser(ctx *fiber.Ctx) []model.UserDal {
 	}
 	getAllUser := u.UserRepository.GetAllUser(ctx)
 	return getAllUser
+}
+func (u UserService) DeleteUserByEmail(ctx *fiber.Ctx) (map[string]interface{}, error) {
+	email := ctx.Params("email")
+
+	byEmail, err := u.UserRepository.DeleteUserByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[string]interface{})
+
+	if byEmail == 0 {
+		m["message"] = "user did not found to delete "
+		return m, err
+	}
+	m["message"] = "user deleted"
+	u.UserRedis.DeleteUserByEmail(email)
+	return m, nil
 }
