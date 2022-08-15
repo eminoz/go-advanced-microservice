@@ -10,6 +10,7 @@ import (
 type IUserCache interface {
 	SaveUserByEmail(user model.UserDal) error
 	GetUserByEmail(email string) model.UserDal
+	GetAllUser() []model.UserDal
 }
 
 type UserCache struct {
@@ -44,5 +45,16 @@ func (c *UserCache) GetUserByEmail(email string) model.UserDal {
 	hGet := c.Redis.HGet(ctx, "users", email)
 	var user model.UserDal
 	json.Unmarshal([]byte(hGet.Val()), &user)
+	return user
+}
+func (c *UserCache) GetAllUser() []model.UserDal {
+	ctx := context.TODO()
+	getAll := c.Redis.HGetAll(ctx, "users")
+	var user []model.UserDal
+	var u model.UserDal
+	for _, j := range getAll.Val() {
+		json.Unmarshal([]byte(j), &u)
+		user = append(user, u)
+	}
 	return user
 }

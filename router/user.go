@@ -17,5 +17,6 @@ func Setup() *fiber.App {
 	controller := api.UserController{UserController: &userService}
 	f.Post("/createUser", controller.CreateUser)
 	f.Get("/getUserByEmail/:email", controller.GetUserByEmail)
+	f.Get("/getAllUser", controller.GetAllUser)
 	return f
 }

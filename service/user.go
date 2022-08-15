@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/eminoz/go-redis-project/cache"
 	"github.com/eminoz/go-redis-project/model"
 	"github.com/eminoz/go-redis-project/repository"
@@ -11,6 +10,7 @@ import (
 type IUserService interface {
 	CreateUser(ctx *fiber.Ctx) (interface{}, error)
 	GetUserByEmail(ctx *fiber.Ctx) model.UserDal
+	GetAllUser(ctx *fiber.Ctx) []model.UserDal
 }
 
 type UserService struct {
@@ -31,13 +31,18 @@ func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, error) {
 }
 func (u *UserService) GetUserByEmail(ctx *fiber.Ctx) model.UserDal {
 	email := ctx.Params("email")
-
 	userByEmail := u.UserRedis.GetUserByEmail(email)
 	if userByEmail.Email != "" {
-		fmt.Println("sent from redis")
 		return userByEmail
 	}
 	getUserByEmail := u.UserRepository.GetUserByEmail(ctx, email)
-
 	return getUserByEmail
+}
+func (u UserService) GetAllUser(ctx *fiber.Ctx) []model.UserDal {
+	user := u.UserRedis.GetAllUser()
+	if len(user) > 0 {
+		return user
+	}
+	getAllUser := u.UserRepository.GetAllUser(ctx)
+	return getAllUser
 }
