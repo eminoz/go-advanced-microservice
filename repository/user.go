@@ -12,6 +12,7 @@ type IUserRepository interface {
 	GetUserByEmail(ctx *fiber.Ctx, email string) model.UserDal
 	GetAllUser(ctx *fiber.Ctx) []model.UserDal
 	DeleteUserByEmail(ctx *fiber.Ctx, email string) (int64, error)
+	UpdateUserByEmail(ctx *fiber.Ctx, email string, user model.UserDal) (bool, string)
 }
 
 func (u *UserCollection) CreateUser(ctx *fiber.Ctx, user *model.User) (interface{}, error) {
@@ -48,4 +49,21 @@ func (u UserCollection) DeleteUserByEmail(ctx *fiber.Ctx, email string) (int64, 
 		return 0, err
 	}
 	return deleteOne.DeletedCount, nil
+}
+func (u UserCollection) UpdateUserByEmail(ctx *fiber.Ctx, email string, user model.UserDal) (bool, string) {
+	filter := bson.D{{"email", email}}
+	var usr model.User
+	err := u.Collection.FindOne(ctx.Context(), filter).Decode(&usr)
+	if err != nil {
+		return false, "user did not found"
+	}
+	usr.Email = user.Email
+	usr.Name = user.Name
+	update := bson.D{{"$set", usr}}
+	updateOne, _ := u.Collection.UpdateOne(ctx.Context(), filter, update)
+	if updateOne.ModifiedCount > 0 {
+		return true, "user updated"
+	}
+	return false, "user did not updated"
+
 }

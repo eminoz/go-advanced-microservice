@@ -38,3 +38,7 @@ func (u UserController) DeleteUserByEmail(ctx *fiber.Ctx) error {
 	return ctx.JSON(email)
 
 }
+func (u UserController) UpdatedUserByEmail(ctx *fiber.Ctx) error {
+	email := u.UserController.UpdateUserByEmail(ctx)
+	return ctx.JSON(email)
+}

@@ -12,6 +12,7 @@ type IUserService interface {
 	GetUserByEmail(ctx *fiber.Ctx) model.UserDal
 	GetAllUser(ctx *fiber.Ctx) []model.UserDal
 	DeleteUserByEmail(ctx *fiber.Ctx) (map[string]interface{}, error)
+	UpdateUserByEmail(ctx *fiber.Ctx) string
 }
 
 type UserService struct {
@@ -63,4 +64,19 @@ func (u UserService) DeleteUserByEmail(ctx *fiber.Ctx) (map[string]interface{}, 
 	m["message"] = "user deleted"
 	u.UserRedis.DeleteUserByEmail(email)
 	return m, nil
+}
+
+func (u UserService) UpdateUserByEmail(ctx *fiber.Ctx) string {
+	email := ctx.Params("email")
+	m := new(model.UserDal)
+	ctx.BodyParser(m)
+	if m.Email == "" {
+		return "user mustn't be empty"
+	}
+	byEmail, msg := u.UserRepository.UpdateUserByEmail(ctx, email, *m)
+	if byEmail {
+		return msg
+	}
+
+	return msg
 }

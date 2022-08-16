@@ -13,9 +13,11 @@ func Setup() *fiber.App {
 	client := cache.InitRedis()
 	userCache := cache.UserCache{Redis: client}
 	userCollectionSetting := repository.UserCollectionSetting()
-	userService := service.UserService{UserRepository: userCollectionSetting, UserRedis: &userCache}
+	userService := service.UserService{UserRepository: userCollectionSetting,
+		UserRedis: &userCache}
 	controller := api.UserController{UserController: &userService}
 	f.Post("/createUser", controller.CreateUser)
+	f.Put("/updateUser/:email", controller.UpdatedUserByEmail)
 	f.Get("/getUserByEmail/:email", controller.GetUserByEmail)
 	f.Get("/getAllUser", controller.GetAllUser)
 	f.Delete("/deleteUserByEmail/:email", controller.DeleteUserByEmail)
