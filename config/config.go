@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/joho/godotenv"
 	"os"
 )
@@ -23,7 +24,7 @@ func SetupConfig() (err error) {
 		Port:      os.Getenv("PORT"),
 		AppSecret: os.Getenv("APP_SECRET"),
 	}
-
+	fmt.Println(configuration.MongoDb)
 	Config = configuration
 	return
 }

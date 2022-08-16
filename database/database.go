@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"github.com/eminoz/go-redis-project/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -13,7 +12,6 @@ var Database *mongo.Database
 
 func SetDatabase() error {
 	getConfig := config.GetConfig()
-	fmt.Println(getConfig.MongoDb)
 	var database *mongo.Database
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
