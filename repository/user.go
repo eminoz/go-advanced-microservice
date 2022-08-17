@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"github.com/eminoz/go-redis-project/model"
+	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 )

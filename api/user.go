@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/eminoz/go-redis-project/service"
+	"github.com/eminoz/go-advanced-microservice/service"
 	"github.com/gofiber/fiber/v2"
 )
 

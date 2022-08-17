@@ -2,10 +2,10 @@ package service
 
 import (
 	"fmt"
-	"github.com/eminoz/go-redis-project/cache"
-	"github.com/eminoz/go-redis-project/core/utilities"
-	"github.com/eminoz/go-redis-project/model"
-	"github.com/eminoz/go-redis-project/repository"
+	"github.com/eminoz/go-advanced-microservice/cache"
+	"github.com/eminoz/go-advanced-microservice/core/utilities"
+	"github.com/eminoz/go-advanced-microservice/model"
+	"github.com/eminoz/go-advanced-microservice/repository"
 	"github.com/gofiber/fiber/v2"
 )
 

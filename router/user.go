@@ -1,10 +1,10 @@
 package router
 
 import (
-	"github.com/eminoz/go-redis-project/api"
-	"github.com/eminoz/go-redis-project/cache"
-	"github.com/eminoz/go-redis-project/repository"
-	"github.com/eminoz/go-redis-project/service"
+	"github.com/eminoz/go-advanced-microservice/api"
+	"github.com/eminoz/go-advanced-microservice/cache"
+	"github.com/eminoz/go-advanced-microservice/repository"
+	"github.com/eminoz/go-advanced-microservice/service"
 	"github.com/gofiber/fiber/v2"
 )
 

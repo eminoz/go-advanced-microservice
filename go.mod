@@ -1,4 +1,4 @@
-module github.com/eminoz/go-redis-project
+module github.com/eminoz/go-advanced-microservice
 
 go 1.18
 

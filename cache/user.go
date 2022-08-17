@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/eminoz/go-redis-project/model"
+	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/go-redis/redis/v8"
 )
 

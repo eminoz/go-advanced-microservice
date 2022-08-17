@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/eminoz/go-redis-project/config"
-	"github.com/eminoz/go-redis-project/database"
-	"github.com/eminoz/go-redis-project/router"
+	"github.com/eminoz/go-advanced-microservice/config"
+	"github.com/eminoz/go-advanced-microservice/database"
+	"github.com/eminoz/go-advanced-microservice/router"
 )
 
 func main() {
@@ -13,4 +13,3 @@ func main() {
 	setup.Listen(":" + config.GetConfig().Port)
 
 }
-

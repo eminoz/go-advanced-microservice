@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"github.com/eminoz/go-redis-project/config"
+	"github.com/eminoz/go-advanced-microservice/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/eminoz/go-redis-project/database"
+	"github.com/eminoz/go-advanced-microservice/database"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
