@@ -19,9 +19,11 @@ func (u *UserCollection) CreateUser(ctx *fiber.Ctx, user *model.User) (interface
 	insertOne, err := u.Collection.InsertOne(ctx.Context(), user)
 	if err != nil {
 		return nil, err
-
 	}
-	return insertOne, nil
+	filter := bson.D{{"_id", insertOne.InsertedID}}
+	var userDal model.UserDal
+	u.Collection.FindOne(ctx.Context(), filter).Decode(&userDal)
+	return userDal, nil
 }
 
 func (u *UserCollection) GetUserByEmail(ctx *fiber.Ctx, email string) model.UserDal {

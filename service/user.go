@@ -1,7 +1,9 @@
 package service
 
 import (
+	"fmt"
 	"github.com/eminoz/go-redis-project/cache"
+	"github.com/eminoz/go-redis-project/core/utilities"
 	"github.com/eminoz/go-redis-project/model"
 	"github.com/eminoz/go-redis-project/repository"
 	"github.com/gofiber/fiber/v2"
@@ -9,10 +11,10 @@ import (
 
 type IUserService interface {
 	CreateUser(ctx *fiber.Ctx) (interface{}, error)
-	GetUserByEmail(ctx *fiber.Ctx) model.UserDal
-	GetAllUser(ctx *fiber.Ctx) []model.UserDal
-	DeleteUserByEmail(ctx *fiber.Ctx) (map[string]interface{}, error)
-	UpdateUserByEmail(ctx *fiber.Ctx) string
+	GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError)
+	GetAllUser(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
+	DeleteUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
+	UpdateUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
 }
 
 type UserService struct {
@@ -27,56 +29,69 @@ func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	dal := model.UserDal{Name: m.Name, Email: m.Email}
-	u.UserRedis.SaveUserByEmail(dal)
-	return createUser, nil
+	go func() {
+		dal := model.UserDal{Name: m.Name, Email: m.Email} //model mapping
+		u.UserRedis.SaveUserByEmail(dal)                   //save user in redis
+
+	}()
+
+	return utilities.SuccessDataResult("user created", createUser), nil
 }
-func (u *UserService) GetUserByEmail(ctx *fiber.Ctx) model.UserDal {
+func (u *UserService) GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
 	email := ctx.Params("email")
 	userByEmail := u.UserRedis.GetUserByEmail(email)
-	if userByEmail.Email != "" {
-		return userByEmail
+	if userByEmail.Email == email {
+		fmt.Println(userByEmail)
+		return utilities.SuccessDataResult("user found", userByEmail), nil
+
 	}
 	getUserByEmail := u.UserRepository.GetUserByEmail(ctx, email)
-	return getUserByEmail
+	if getUserByEmail.Email == "" {
+		return nil, utilities.ErrorResult("user did not found")
+	}
+	result := utilities.SuccessDataResult("user found", getUserByEmail)
+	return result, nil
 }
-func (u UserService) GetAllUser(ctx *fiber.Ctx) []model.UserDal {
+func (u UserService) GetAllUser(ctx *fiber.Ctx) *utilities.ResultOfSuccessData {
 	user := u.UserRedis.GetAllUser()
 	if len(user) > 0 {
-		return user
+		result := utilities.SuccessDataResult("all users", user)
+		return result
 	}
 	getAllUser := u.UserRepository.GetAllUser(ctx)
-	return getAllUser
+	result := utilities.SuccessDataResult("all users", getAllUser)
+	return result
 }
-func (u UserService) DeleteUserByEmail(ctx *fiber.Ctx) (map[string]interface{}, error) {
+func (u UserService) DeleteUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError) {
 	email := ctx.Params("email")
 
-	byEmail, err := u.UserRepository.DeleteUserByEmail(ctx, email)
-	if err != nil {
-		return nil, err
-	}
-	m := make(map[string]interface{})
+	byEmail, _ := u.UserRepository.DeleteUserByEmail(ctx, email)
 
 	if byEmail == 0 {
-		m["message"] = "user did not found to delete "
-		return m, err
+		return nil, utilities.ErrorResult("user did not find to delete")
 	}
-	m["message"] = "user deleted"
-	u.UserRedis.DeleteUserByEmail(email)
-	return m, nil
+
+	go func() {
+		u.UserRedis.DeleteUserByEmail(email) //delete user in redis
+	}()
+	result := utilities.SuccessResult("user deleted")
+	return result, nil
 }
 
-func (u UserService) UpdateUserByEmail(ctx *fiber.Ctx) string {
+func (u UserService) UpdateUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError) {
 	email := ctx.Params("email")
 	m := new(model.UserDal)
 	ctx.BodyParser(m)
 	if m.Email == "" {
-		return "user mustn't be empty"
+		return nil, utilities.ErrorResult("user mustn't be empty")
 	}
 	byEmail, msg := u.UserRepository.UpdateUserByEmail(ctx, email, *m)
 	if byEmail {
-		return msg
+		go func() {
+			u.UserRedis.SaveUserByEmail(*m) //updated user in redis
+		}()
+		return utilities.SuccessResult(msg), nil
 	}
 
-	return msg
+	return nil, utilities.ErrorResult(msg)
 }

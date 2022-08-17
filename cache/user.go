@@ -23,6 +23,7 @@ func (c *UserCache) SaveUserByEmail(user model.UserDal) error {
 	ctx := context.TODO()
 
 	marshal, _ := json.Marshal(user)
+	fmt.Println(user)
 	c.Redis.HSet(ctx, "users", user.Email, marshal)
 
 	/*type Author struct {
