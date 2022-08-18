@@ -6,6 +6,7 @@ import (
 	"github.com/eminoz/go-advanced-microservice/core/utilities"
 	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/eminoz/go-advanced-microservice/repository"
+	"github.com/eminoz/go-advanced-microservice/security/encryption"
 	"github.com/eminoz/go-advanced-microservice/security/jwt"
 	"github.com/gofiber/fiber/v2"
 )
@@ -23,6 +24,7 @@ type UserService struct {
 	UserRepository repository.IUserRepository
 	UserRedis      cache.IUserCache
 	Authentication jwt.IToken
+	Encryption     encryption.Encryption
 }
 
 func (u UserService) SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
@@ -32,10 +34,14 @@ func (u UserService) SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *ut
 	if user.Email == "" {
 		return nil, utilities.ErrorResult("user not found ")
 	}
-
+	checkPasswordHash := u.Encryption.CheckPasswordHash(m.Password, user.Password)
+	if !checkPasswordHash {
+		return nil, utilities.ErrorResult("password is incorrect")
+	}
 	generateJWT, err := u.Authentication.GenerateJWT(user.Email, user.Role)
+
 	if err != nil {
-		return nil, utilities.ErrorResult("not generate token")
+		return nil, utilities.ErrorResult("did not generate token")
 	}
 	var token model.Token
 	token.Email = user.Email
@@ -50,6 +56,8 @@ func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, *utilities.Result
 	if email.Email != "" {
 		return nil, utilities.ErrorResult("user already exist")
 	}
+	password, _ := u.Encryption.GenerateHashPassword(m.Password)
+	m.Password = password
 	createUser, _ := u.UserRepository.CreateUser(ctx, m)
 
 	go func() {
