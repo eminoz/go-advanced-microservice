@@ -6,6 +6,7 @@ import (
 	"github.com/eminoz/go-advanced-microservice/core/utilities"
 	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/eminoz/go-advanced-microservice/repository"
+	"github.com/eminoz/go-advanced-microservice/security/jwt"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,13 +16,33 @@ type IUserService interface {
 	GetAllUser(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
 	DeleteUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
 	UpdateUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
+	SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError)
 }
 
 type UserService struct {
 	UserRepository repository.IUserRepository
 	UserRedis      cache.IUserCache
+	Authentication jwt.IToken
 }
 
+func (u UserService) SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
+	m := new(model.Authentication)
+	ctx.BodyParser(m)
+	user := u.UserRepository.GetUserByEmailForAuth(ctx, m.Email)
+	if user.Email == "" {
+		return nil, utilities.ErrorResult("user not found ")
+	}
+
+	generateJWT, err := u.Authentication.GenerateJWT(user.Email, user.Role)
+	if err != nil {
+		return nil, utilities.ErrorResult("not generate token")
+	}
+	var token model.Token
+	token.Email = user.Email
+	token.Role = user.Role
+	token.TokenString = generateJWT
+	return utilities.SuccessDataResult("signed in successfully", token), nil
+}
 func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, *utilities.ResultError) {
 	m := new(model.User)
 	ctx.BodyParser(m)

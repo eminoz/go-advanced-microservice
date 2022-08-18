@@ -25,22 +25,6 @@ func (c *UserCache) SaveUserByEmail(user model.UserDal) error {
 	marshal, _ := json.Marshal(user)
 	fmt.Println(user)
 	c.Redis.HSet(ctx, "users", user.Email, marshal)
-
-	/*type Author struct {
-		Name string `json:"name"`
-		Age  int    `json:"age"`
-	}
-	author := Author{Name: "emin", Age: 25}
-	user, err := json.Marshal(author)
-	if err != nil {
-		fmt.Println(err)
-	}
-	client.HSet(ctx, "users", author.Name, user)
-	getAll := client.HGet(ctx, "users", author.Name)
-	var a Author
-	json.Unmarshal([]byte(getAll.Val()), &a)
-	fmt.Println(a.Age)*/
-
 	return nil
 }
 func (c *UserCache) GetUserByEmail(email string) model.UserDal {

@@ -10,9 +10,19 @@ type IUserController interface {
 	GetUserByEmail(ctx *fiber.Ctx) error
 	DeleteUserByEmail(ctx *fiber.Ctx) error
 	UpdatedUserByEmail(ctx *fiber.Ctx) error
+	SignIn(ctx *fiber.Ctx) error
 }
 type UserController struct {
 	UserController service.IUserService
+}
+
+func (u UserController) SignIn(ctx *fiber.Ctx) error {
+	in, resultError := u.UserController.SignIn(ctx)
+	if resultError != nil {
+		return ctx.JSON(resultError)
+	}
+	return ctx.JSON(in)
+
 }
 
 func (u *UserController) CreateUser(ctx *fiber.Ctx) error {

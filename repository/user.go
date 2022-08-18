@@ -13,6 +13,7 @@ type IUserRepository interface {
 	GetAllUser(ctx *fiber.Ctx) []model.UserDal
 	DeleteUserByEmail(ctx *fiber.Ctx, email string) (int64, error)
 	UpdateUserByEmail(ctx *fiber.Ctx, email string, user model.UserDal) (bool, string)
+	GetUserByEmailForAuth(ctx *fiber.Ctx, email string) model.User
 }
 
 func (u *UserCollection) CreateUser(ctx *fiber.Ctx, user *model.User) (interface{}, error) {
@@ -26,6 +27,12 @@ func (u *UserCollection) CreateUser(ctx *fiber.Ctx, user *model.User) (interface
 	return userDal, nil
 }
 
+func (u *UserCollection) GetUserByEmailForAuth(ctx *fiber.Ctx, email string) model.User {
+	filter := bson.D{{"email", email}}
+	var User model.User
+	u.Collection.FindOne(ctx.Context(), filter).Decode(&User)
+	return User
+}
 func (u *UserCollection) GetUserByEmail(ctx *fiber.Ctx, email string) model.UserDal {
 	filter := bson.D{{"email", email}}
 	var userDal model.UserDal
