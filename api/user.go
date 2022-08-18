@@ -16,9 +16,9 @@ type UserController struct {
 }
 
 func (u *UserController) CreateUser(ctx *fiber.Ctx) error {
-	createUser, err := u.UserController.CreateUser(ctx)
-	if err != nil {
-		return err
+	createUser, resultError := u.UserController.CreateUser(ctx)
+	if resultError != nil {
+		return ctx.JSON(resultError)
 	}
 	return ctx.JSON(createUser)
 }

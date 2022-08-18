@@ -10,7 +10,7 @@ import (
 )
 
 type IUserService interface {
-	CreateUser(ctx *fiber.Ctx) (interface{}, error)
+	CreateUser(ctx *fiber.Ctx) (interface{}, *utilities.ResultError)
 	GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError)
 	GetAllUser(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
 	DeleteUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
@@ -22,13 +22,15 @@ type UserService struct {
 	UserRedis      cache.IUserCache
 }
 
-func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, error) {
+func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, *utilities.ResultError) {
 	m := new(model.User)
 	ctx.BodyParser(m)
-	createUser, err := u.UserRepository.CreateUser(ctx, m)
-	if err != nil {
-		return nil, err
+	email := u.UserRepository.GetUserByEmail(ctx, m.Email)
+	if email.Email != "" {
+		return nil, utilities.ErrorResult("user already exist")
 	}
+	createUser, _ := u.UserRepository.CreateUser(ctx, m)
+
 	go func() {
 		dal := model.UserDal{Name: m.Name, Email: m.Email} //model mapping
 		u.UserRedis.SaveUserByEmail(dal)                   //save user in redis
