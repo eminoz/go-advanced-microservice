@@ -4,6 +4,7 @@ import (
 	"github.com/eminoz/go-advanced-microservice/api"
 	"github.com/eminoz/go-advanced-microservice/cache"
 	"github.com/eminoz/go-advanced-microservice/middleware/security"
+	"github.com/eminoz/go-advanced-microservice/middleware/validation"
 	"github.com/eminoz/go-advanced-microservice/repository"
 	"github.com/eminoz/go-advanced-microservice/security/encryption"
 	"github.com/eminoz/go-advanced-microservice/security/jwt"
@@ -21,7 +22,7 @@ func Setup() *fiber.App {
 	userService := service.UserService{UserRepository: userCollectionSetting,
 		UserRedis: &userCache, Authentication: auth, Encryption: userEncryption}
 	controller := api.UserController{UserController: &userService}
-	f.Post("/createUser", controller.CreateUser)
+	f.Post("/createUser", validation.UserValidation(), controller.CreateUser)
 	f.Post("/signin", controller.SignIn)
 	f.Put("/updateUser/:email", security.IsAuth(), controller.UpdatedUserByEmail)
 	f.Get("/getUserByEmail/:email", controller.GetUserByEmail)
