@@ -1,10 +1,13 @@
 package model
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type User struct {
 	Name     string `json:"name"`
 	Email    string `validate:"required,email,omitempty"`
 	Password string `validate:"required,gte=7,lte=130,omitempty"`
 	Role     string `json:"role"`
+	Orders   Orders
 }
 type Authentication struct {
 	Email    string `json:"email"`
@@ -17,6 +20,7 @@ type Token struct {
 	TokenString string `json:"token"`
 }
 type UserDal struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name  string             `json:"name"`
+	Email string             `json:"email"`
 }

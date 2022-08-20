@@ -18,15 +18,21 @@ func Setup() *fiber.App {
 	auth := jwt.Auth{}
 	userEncryption := encryption.UserEncryption{}
 	userCache := cache.UserCache{Redis: client}
+	//DI
 	userCollectionSetting := repository.UserCollectionSetting()
-	userService := service.UserService{UserRepository: userCollectionSetting,
-		UserRedis: &userCache, Authentication: auth, Encryption: userEncryption}
+	userService := service.UserService{UserRepository: userCollectionSetting, UserRedis: &userCache, Authentication: auth, Encryption: userEncryption}
 	controller := api.UserController{UserController: &userService}
+
 	f.Post("/createUser", validation.UserValidation(), controller.CreateUser)
 	f.Post("/signin", controller.SignIn)
 	f.Put("/updateUser/:email", security.IsAuth(), controller.UpdatedUserByEmail)
 	f.Get("/getUserByEmail/:email", controller.GetUserByEmail)
 	f.Get("/getAllUser", controller.GetAllUser)
 	f.Delete("/deleteUserByEmail/:email", controller.DeleteUserByEmail)
+
+	oderService := service.OderService{OrderRepository: userCollectionSetting}
+	orderController := api.OrderController{OrderService: oderService}
+
+	f.Post("/createOrder/:id", orderController.CreateOrder)
 	return f
 }
