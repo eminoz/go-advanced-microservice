@@ -10,8 +10,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+//go:generate mockgen -destination=../mocks/services/mockUserService.go -package=service  github.com/eminoz/go-advanced-microservice/service IUserService
+
 type IUserService interface {
-	CreateUser(ctx *fiber.Ctx) (interface{}, *utilities.ResultError)
+	CreateUser(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError)
 	GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError)
 	GetAllUser(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
 	DeleteUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
@@ -24,6 +26,15 @@ type UserService struct {
 	UserRedis      cache.IUserCache
 	Authentication jwt.IToken
 	Encryption     encryption.Encryption
+}
+
+func NewUserService(r repository.IUserRepository, c cache.IUserCache, j jwt.IToken, e encryption.Encryption) IUserService {
+	return &UserService{
+		UserRepository: r,
+		UserRedis:      c,
+		Authentication: j,
+		Encryption:     e,
+	}
 }
 
 func (u UserService) SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
@@ -48,7 +59,7 @@ func (u UserService) SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *ut
 	token.TokenString = generateJWT
 	return utilities.SuccessDataResult("signed in successfully", token), nil
 }
-func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, *utilities.ResultError) {
+func (u UserService) CreateUser(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
 	m := new(model.User)
 	ctx.BodyParser(m)
 	email := u.UserRepository.GetUserByEmail(ctx, m.Email)
@@ -64,12 +75,11 @@ func (u *UserService) CreateUser(ctx *fiber.Ctx) (interface{}, *utilities.Result
 
 	return utilities.SuccessDataResult("user created", createUser), nil
 }
-func (u *UserService) GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
+func (u UserService) GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
 	email := ctx.Params("email")
 	userByEmail := u.UserRedis.GetUserByEmail(email)
 	if userByEmail.Email == email {
 		return utilities.SuccessDataResult("user found", userByEmail), nil
-
 	}
 	getUserByEmail := u.UserRepository.GetUserByEmail(ctx, email)
 	if getUserByEmail.Email == "" {

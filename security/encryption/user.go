@@ -2,6 +2,8 @@ package encryption
 
 import "golang.org/x/crypto/bcrypt"
 
+//go:generate mockgen -destination=../mocks/Encryption/mockUserEncryption.go -package=Encryption  github.com/eminoz/go-advanced-microservice/security/encryption Encryption
+
 type Encryption interface {
 	GenerateHashPassword(password string) (string, error)
 	CheckPasswordHash(password, hash string) bool

@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+//go:generate mockgen -destination=../mocks/cache/mockUsercache.go -package=cache  github.com/eminoz/go-advanced-microservice/cache IUserCache
 type IUserCache interface {
 	SaveUserByEmail(user model.UserDal) error
 	GetUserByEmail(email string) model.UserDal
@@ -19,7 +20,7 @@ type UserCache struct {
 	Redis *redis.Client
 }
 
-func (c *UserCache) SaveUserByEmail(user model.UserDal) error {
+func (c UserCache) SaveUserByEmail(user model.UserDal) error {
 	ctx := context.TODO()
 
 	marshal, _ := json.Marshal(user)
@@ -27,14 +28,14 @@ func (c *UserCache) SaveUserByEmail(user model.UserDal) error {
 	c.Redis.HSet(ctx, "users", user.Email, marshal)
 	return nil
 }
-func (c *UserCache) GetUserByEmail(email string) model.UserDal {
+func (c UserCache) GetUserByEmail(email string) model.UserDal {
 	ctx := context.TODO()
 	hGet := c.Redis.HGet(ctx, "users", email)
 	var user model.UserDal
 	json.Unmarshal([]byte(hGet.Val()), &user)
 	return user
 }
-func (c *UserCache) GetAllUser() []model.UserDal {
+func (c UserCache) GetAllUser() []model.UserDal {
 	ctx := context.TODO()
 	getAll := c.Redis.HGetAll(ctx, "users")
 	var user []model.UserDal

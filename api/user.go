@@ -11,11 +11,17 @@ type IUserController interface {
 	DeleteUserByEmail(ctx *fiber.Ctx) error
 	UpdatedUserByEmail(ctx *fiber.Ctx) error
 	SignIn(ctx *fiber.Ctx) error
+	GetAllUser(ctx *fiber.Ctx) error
 }
 type UserController struct {
 	UserController service.IUserService
 }
 
+func NewUserController(u service.IUserService) IUserController {
+	return &UserController{
+		UserController: u,
+	}
+}
 func (u UserController) SignIn(ctx *fiber.Ctx) error {
 	in, resultError := u.UserController.SignIn(ctx)
 	if resultError != nil {
@@ -25,7 +31,7 @@ func (u UserController) SignIn(ctx *fiber.Ctx) error {
 
 }
 
-func (u *UserController) CreateUser(ctx *fiber.Ctx) error {
+func (u UserController) CreateUser(ctx *fiber.Ctx) error {
 	createUser, resultError := u.UserController.CreateUser(ctx)
 	if resultError != nil {
 		return ctx.JSON(resultError)

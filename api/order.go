@@ -12,6 +12,13 @@ type OrderController struct {
 	OrderService service.IOrderService
 }
 
+func NewOrderController(s service.IOrderService) IOrderController {
+	return &OrderController{
+		OrderService: s,
+	}
+
+}
+
 func (o OrderController) CreateOrder(ctx *fiber.Ctx) error {
 	id := o.OrderService.CreateNewOrdersById(*ctx)
 	return ctx.JSON(id)

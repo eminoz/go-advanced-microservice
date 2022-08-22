@@ -18,20 +18,22 @@ func Setup() *fiber.App {
 	auth := jwt.Auth{}
 	userEncryption := encryption.UserEncryption{}
 	userCache := cache.UserCache{Redis: client}
-	//DI
+
+	//DI for user service
 	userCollectionSetting := repository.UserCollectionSetting()
-	userService := service.UserService{UserRepository: userCollectionSetting, UserRedis: &userCache, Authentication: auth, Encryption: userEncryption}
-	controller := api.UserController{UserController: &userService}
+	newUserService := service.NewUserService(userCollectionSetting, userCache, auth, userEncryption)
+	userController := api.NewUserController(newUserService)
 
-	f.Post("/createUser", validation.UserValidation(), controller.CreateUser)
-	f.Post("/signin", controller.SignIn)
-	f.Put("/updateUser/:email", security.IsAuth(), controller.UpdatedUserByEmail)
-	f.Get("/getUserByEmail/:email", controller.GetUserByEmail)
-	f.Get("/getAllUser", controller.GetAllUser)
-	f.Delete("/deleteUserByEmail/:email", controller.DeleteUserByEmail)
+	f.Post("/createUser", validation.UserValidation(), userController.CreateUser)
+	f.Post("/signin", userController.SignIn)
+	f.Put("/updateUser/:email", security.IsAuth(), userController.UpdatedUserByEmail)
+	f.Get("/getUserByEmail/:email", userController.GetUserByEmail)
+	f.Get("/getAllUser", userController.GetAllUser)
+	f.Delete("/deleteUserByEmail/:email", userController.DeleteUserByEmail)
 
-	oderService := service.OderService{OrderRepository: userCollectionSetting}
-	orderController := api.OrderController{OrderService: oderService}
+	//DI for order service
+	orderService := service.NewOrderService(userCollectionSetting)
+	orderController := api.NewOrderController(orderService)
 
 	f.Post("/createOrder/:id", orderController.CreateOrder)
 	return f

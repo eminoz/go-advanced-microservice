@@ -15,6 +15,12 @@ type OderService struct {
 	OrderRepository repository.IOrders
 }
 
+func NewOrderService(o repository.IOrders) IOrderService {
+	return &OderService{
+		OrderRepository: o,
+	}
+}
+
 func (o OderService) CreateNewOrdersById(ctx fiber.Ctx) interface{} {
 	userID := ctx.Params("id")
 	m := new(model.Orders)

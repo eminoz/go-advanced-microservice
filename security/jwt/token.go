@@ -11,6 +11,8 @@ type IToken interface {
 	GenerateJWT(email string, role string) (string, error)
 }
 
+//go:generate mockgen -destination=../mocks/Auth/mockUserAuth.go -package=jwt  github.com/eminoz/go-advanced-microservice/security/jwt IToken
+
 type Auth struct{}
 
 func (a Auth) GenerateJWT(email string, role string) (string, error) {

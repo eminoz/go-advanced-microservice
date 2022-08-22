@@ -11,6 +11,7 @@ import (
 var Database *mongo.Database
 
 func SetDatabase() error {
+
 	getConfig := config.GetConfig()
 	var database *mongo.Database
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

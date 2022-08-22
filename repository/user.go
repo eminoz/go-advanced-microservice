@@ -16,7 +16,7 @@ type IUserRepository interface {
 	GetUserByEmailForAuth(ctx *fiber.Ctx, email string) model.User
 }
 
-func (u *UserCollection) CreateUser(ctx *fiber.Ctx, user *model.User) (model.UserDal, error) {
+func (u UserCollection) CreateUser(ctx *fiber.Ctx, user *model.User) (model.UserDal, error) {
 	insertOne, err := u.Collection.InsertOne(ctx.Context(), user)
 	var userDal model.UserDal
 	if err != nil {
@@ -28,13 +28,13 @@ func (u *UserCollection) CreateUser(ctx *fiber.Ctx, user *model.User) (model.Use
 	return userDal, nil
 }
 
-func (u *UserCollection) GetUserByEmailForAuth(ctx *fiber.Ctx, email string) model.User {
+func (u UserCollection) GetUserByEmailForAuth(ctx *fiber.Ctx, email string) model.User {
 	filter := bson.D{{"email", email}}
 	var User model.User
 	u.Collection.FindOne(ctx.Context(), filter).Decode(&User)
 	return User
 }
-func (u *UserCollection) GetUserByEmail(ctx *fiber.Ctx, email string) model.UserDal {
+func (u UserCollection) GetUserByEmail(ctx *fiber.Ctx, email string) model.UserDal {
 	filter := bson.D{{"email", email}}
 	var userDal model.UserDal
 	u.Collection.FindOne(ctx.Context(), filter).Decode(&userDal)
