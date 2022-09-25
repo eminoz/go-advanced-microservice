@@ -21,6 +21,6 @@ services:
     container_name: mongo-express
     restart: unless-stopped
     ports:
-      - 8081:8081
+      - 8080:8081
     environment:
       ME_CONFIG_MONGODB_SERVER: mongodb
