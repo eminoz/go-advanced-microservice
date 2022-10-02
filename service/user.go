@@ -36,27 +36,33 @@ func NewUserService(r repository.IUserRepository, c cache.IUserCache, j jwt.ITok
 		Encryption:     e,
 	}
 }
-
-func (u UserService) SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
-	m := new(model.Authentication)
-	ctx.BodyParser(m)
-	user := u.UserRepository.GetUserByEmailForAuth(ctx, m.Email)
+func (u UserService) createToken(ctx *fiber.Ctx, email string, password string) (model.Token, *utilities.ResultError) {
+	user := u.UserRepository.GetUserByEmailForAuth(ctx, email)
 	if user.Email == "" {
-		return nil, utilities.ErrorResult("user not found ")
+		return model.Token{}, utilities.ErrorResult("user not found ")
 	}
-	checkPasswordHash := u.Encryption.CheckPasswordHash(m.Password, user.Password)
+	checkPasswordHash := u.Encryption.CheckPasswordHash(password, user.Password)
 	if !checkPasswordHash {
-		return nil, utilities.ErrorResult("password is incorrect")
+		return model.Token{}, utilities.ErrorResult("password is incorrect")
 	}
 	generateJWT, err := u.Authentication.GenerateJWT(user.Email, user.Role)
 
 	if err != nil {
-		return nil, utilities.ErrorResult("did not generate token")
+		return model.Token{}, utilities.ErrorResult("did not generate token")
 	}
 	var token model.Token
 	token.Email = user.Email
 	token.Role = user.Role
 	token.TokenString = generateJWT
+	return token, nil
+}
+func (u UserService) SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
+	m := new(model.Authentication)
+	ctx.BodyParser(m)
+	token, resultError := u.createToken(ctx, m.Email, m.Password)
+	if resultError != nil {
+		return nil, utilities.ErrorResult(resultError.Message)
+	}
 	return utilities.SuccessDataResult("signed in successfully", token), nil
 }
 func (u UserService) CreateUser(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
@@ -67,13 +73,18 @@ func (u UserService) CreateUser(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData,
 		return nil, utilities.ErrorResult("user already exist")
 	}
 	password, _ := u.Encryption.GenerateHashPassword(m.Password)
+	passwordForAuth := m.Password
 	m.Password = password
 	createUser, _ := u.UserRepository.CreateUser(ctx, m)
-	dal := model.UserDal{ID: createUser.ID, Name: m.Name, Email: m.Email} //model mapping
+	token, resultError := u.createToken(ctx, m.Email, passwordForAuth)
+	if resultError != nil {
+		return nil, utilities.ErrorResult(resultError.Message)
+	}
+	dal := model.UserDal{ID: createUser.ID, Name: m.Name, Email: m.Email, Token: token.TokenString} //model mapping
 	u.UserRedis.SaveUserByEmail(dal)
 	//save user in redis
 
-	return utilities.SuccessDataResult("user created", createUser), nil
+	return utilities.SuccessDataResult("user created", dal), nil
 }
 func (u UserService) GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
 	email := ctx.Params("email")

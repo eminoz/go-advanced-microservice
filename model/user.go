@@ -23,4 +23,5 @@ type UserDal struct {
 	ID    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name  string             `json:"name"`
 	Email string             `json:"email"`
+	Token string             `json:"token"`
 }

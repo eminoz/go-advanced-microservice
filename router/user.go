@@ -4,10 +4,12 @@ import (
 	"github.com/eminoz/go-advanced-microservice/middleware/security"
 	"github.com/eminoz/go-advanced-microservice/middleware/validation"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func Setup() *fiber.App {
 	f := fiber.New()
+	f.Use(cors.New())
 	userDI := base{}
 	var u = userDI.UserDI()
 	var o = userDI.OrderDI()
