@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/eminoz/go-advanced-microservice/cache"
 	"github.com/eminoz/go-advanced-microservice/core/utilities"
 	"github.com/eminoz/go-advanced-microservice/model"
@@ -53,6 +54,7 @@ func (u UserService) createToken(ctx *fiber.Ctx, email string, password string) 
 	var token model.Token
 	token.Email = user.Email
 	token.Role = user.Role
+	token.ID = user.ID
 	token.TokenString = generateJWT
 	return token, nil
 }
@@ -129,8 +131,10 @@ func (u UserService) UpdateUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess
 	if m.Email == "" {
 		return nil, utilities.ErrorResult("user mustn't be empty")
 	}
+
 	byEmail, msg := u.UserRepository.UpdateUserByEmail(ctx, email, *m)
 	if byEmail {
+		fmt.Println(m)
 		u.UserRedis.SaveUserByEmail(*m) //updated user in redis
 		return utilities.SuccessResult(msg), nil
 	}

@@ -24,7 +24,7 @@ func (a Auth) GenerateJWT(email string, role string) (string, error) {
 	claims["authorized"] = true
 	claims["email"] = email
 	claims["role"] = role
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
 	tokenString, err := token.SignedString(mySigningKey)
 

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"github.com/eminoz/go-advanced-microservice/core/utilities"
 	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/eminoz/go-advanced-microservice/repository"
@@ -9,6 +10,7 @@ import (
 
 type IOrderService interface {
 	CreateNewOrdersById(ctx fiber.Ctx) interface{}
+	GetOrders(ctx fiber.Ctx) *utilities.ResultOfSuccessData
 }
 
 type OderService struct {
@@ -31,4 +33,11 @@ func (o OderService) CreateNewOrdersById(ctx fiber.Ctx) interface{} {
 		return result
 	}
 	return utilities.SuccessDataResult("user updated", ordersById)
+}
+func (o OderService) GetOrders(ctx fiber.Ctx) *utilities.ResultOfSuccessData {
+	context := context.TODO()
+	userId := ctx.Params("id")
+	orders := o.OrderRepository.GetUsersOrders(context, userId)
+	return utilities.SuccessDataResult("user orders", orders)
+
 }

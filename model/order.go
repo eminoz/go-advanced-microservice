@@ -1,12 +1,12 @@
 package model
 
 type Orders struct {
-	Product []Product
+	TotalPrice int64 `json:"totalPrice"`
+	Product    []Product
 }
 type Product struct {
-	ProductName string  `json:"productName"`
-	Quantity    int32   `json:"quantity"`
-	Price       float32 `json:"price"`
-	Amount      int32   `json:"amount"`
-	Description string  `json:"description"`
+	ProductName string `json:"productName"`
+	Quantity    int32  `json:"quantity"`
+	Price       int64  `json:"price"`
+	Description string `json:"description"`
 }
