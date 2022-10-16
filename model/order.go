@@ -5,6 +5,10 @@ type Orders struct {
 	Product    []Product
 }
 type Product struct {
+	ProductDal
+}
+
+type ProductDal struct {
 	ProductName string `json:"productName"`
 	Quantity    int32  `json:"quantity"`
 	Price       int64  `json:"price"`

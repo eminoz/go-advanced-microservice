@@ -20,3 +20,16 @@ func UserCollectionSetting() *UserCollection {
 		Collection: getDatabase.Collection("user"),
 	}
 }
+
+type ProductCollection struct {
+	Db         *mongo.Database
+	Collection *mongo.Collection
+}
+
+func ProductCollectionSetting() *ProductCollection {
+	getDatabase := database.GetDatabase()
+	return &ProductCollection{
+		Db:         getDatabase,
+		Collection: getDatabase.Collection("product"),
+	}
+}

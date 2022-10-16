@@ -13,6 +13,7 @@ func Setup() *fiber.App {
 	userDI := base{}
 	var u = userDI.UserDI()
 	var o = userDI.OrderDI()
+	var p = userDI.ProductDI()
 	f.Post("/createUser", validation.UserValidation(), u.CreateUser)
 	f.Post("/signin", u.SignIn)
 	f.Put("/updateUser/:email", security.IsAuth(), u.UpdatedUserByEmail)
@@ -22,5 +23,7 @@ func Setup() *fiber.App {
 	//DI for order service
 	f.Post("/createOrder/:id", o.CreateOrder)
 	f.Get("/getUserOrders/:id", o.GetOrders)
+	group := f.Group("/product")
+	group.Post("/create", p.CreateProduct)
 	return f
 }

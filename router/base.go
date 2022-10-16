@@ -30,3 +30,10 @@ func (b base) OrderDI() api.IOrderController {
 	orderController := api.NewOrderController(orderService)
 	return orderController
 }
+func (b base) ProductDI() api.IProductController {
+	//DI for product service
+	productCollection := repository.ProductCollectionSetting()
+	productService := service.NewProductService(productCollection)
+	controller := api.NewProductController(productService)
+	return controller
+}

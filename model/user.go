@@ -10,6 +10,13 @@ type User struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Orders   Orders
 }
+type UserDal struct {
+	ID    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name  string             `json:"name"`
+	Email string             `json:"email"`
+	Token string             `json:"token"`
+}
+
 type Authentication struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -20,10 +27,4 @@ type Token struct {
 	Role        string             `json:"role"`
 	Email       string             `json:"email"`
 	TokenString string             `json:"token"`
-}
-type UserDal struct {
-	ID    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name  string             `json:"name"`
-	Email string             `json:"email"`
-	Token string             `json:"token"`
 }

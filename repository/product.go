@@ -7,14 +7,15 @@ import (
 )
 
 type IProductRepository interface {
-	CreateProduct()
+	CreateProduct(ctx *fiber.Ctx, p *model.Product) model.Product
 }
 
-func (c ProductCollection) CreateProduct(ctx fiber.Ctx, p *model.Product) {
+func (c ProductCollection) CreateProduct(ctx *fiber.Ctx, p *model.Product) model.Product {
 	insertOne, err := c.Collection.InsertOne(ctx.Context(), p)
 	if err != nil {
 	}
 	var prod model.Product
-	bson.D
-	return
+	d := bson.D{{"_id", insertOne.InsertedID}}
+	c.Collection.FindOne(ctx.Context(), d).Decode(&prod)
+	return prod
 }
