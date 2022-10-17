@@ -46,9 +46,9 @@ func (u UserCollection) GetAllUser(ctx *fiber.Ctx) []model.UserDal {
 		fmt.Println(err)
 	}
 	var user []model.UserDal
-	err = find.All(ctx.Context(), &user)
-	if err != nil {
-		fmt.Println(err)
+	err2 := find.All(ctx.Context(), &user)
+	if err2 != nil {
+		fmt.Println(err2)
 	}
 	return user
 }

@@ -25,5 +25,6 @@ func Setup() *fiber.App {
 	f.Get("/getUserOrders/:id", o.GetOrders)
 	group := f.Group("/product")
 	group.Post("/create", p.CreateProduct)
+	group.Get("/getAll", p.GetAllProduct)
 	return f
 }

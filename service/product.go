@@ -9,6 +9,7 @@ import (
 
 type IProductService interface {
 	CreateProduct(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultOfErrorData)
+	GetAllProduct(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
 }
 type ProductService struct {
 	ProductRepository repository.IProductRepository
@@ -27,4 +28,9 @@ func (s ProductService) CreateProduct(ctx *fiber.Ctx) (*utilities.ResultOfSucces
 	dal := model.ProductDal{ProductName: product.ProductName, Quantity: product.Quantity, Price: product.Price, Description: product.Description}
 
 	return utilities.SuccessDataResult("Product Created", dal), nil
+}
+func (s ProductService) GetAllProduct(ctx *fiber.Ctx) *utilities.ResultOfSuccessData {
+	product := s.ProductRepository.GetAllProduct(ctx)
+	return utilities.SuccessDataResult("all product", product)
+
 }

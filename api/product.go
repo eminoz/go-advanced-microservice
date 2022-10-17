@@ -7,6 +7,7 @@ import (
 
 type IProductController interface {
 	CreateProduct(ctx *fiber.Ctx) error
+	GetAllProduct(ctx *fiber.Ctx) error
 }
 type ProductController struct {
 	ProductService service.IProductService
@@ -24,4 +25,8 @@ func (p ProductController) CreateProduct(ctx *fiber.Ctx) error {
 	}
 	return ctx.JSON(createProduct)
 
+}
+func (p ProductController) GetAllProduct(ctx *fiber.Ctx) error {
+	product := p.ProductService.GetAllProduct(ctx)
+	return ctx.JSON(product)
 }
