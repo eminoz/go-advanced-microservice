@@ -12,6 +12,7 @@ type IUserController interface {
 	UpdatedUserByEmail(ctx *fiber.Ctx) error
 	SignIn(ctx *fiber.Ctx) error
 	GetAllUser(ctx *fiber.Ctx) error
+	GetUserAddress(ctx *fiber.Ctx) error
 }
 type UserController struct {
 	UserController service.IUserService
@@ -28,6 +29,11 @@ func (u UserController) SignIn(ctx *fiber.Ctx) error {
 		return ctx.JSON(resultError)
 	}
 	return ctx.JSON(in)
+
+}
+func (u UserController) GetUserAddress(ctx *fiber.Ctx) error {
+	address := u.UserController.GetUsersAddress(ctx)
+	return ctx.JSON(address)
 
 }
 

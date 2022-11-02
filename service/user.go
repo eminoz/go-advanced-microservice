@@ -20,6 +20,7 @@ type IUserService interface {
 	DeleteUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
 	UpdateUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
 	SignIn(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError)
+	GetUsersAddress(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
 }
 
 type UserService struct {
@@ -87,6 +88,11 @@ func (u UserService) CreateUser(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData,
 	//save user in redis
 
 	return utilities.SuccessDataResult("user created", dal), nil
+}
+func (u UserService) GetUsersAddress(ctx *fiber.Ctx) *utilities.ResultOfSuccessData {
+	email := ctx.Params("email")
+	address := u.UserRepository.GetUserAddress(ctx, email)
+	return utilities.SuccessDataResult("address", address)
 }
 func (u UserService) GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
 	email := ctx.Params("email")

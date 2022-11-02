@@ -19,10 +19,12 @@ func Setup() *fiber.App {
 	f.Put("/updateUser/:email", security.IsAuth(), u.UpdatedUserByEmail)
 	f.Get("/getUserByEmail/:email", security.IsAuth(), u.GetUserByEmail)
 	f.Get("/getAllUser", u.GetAllUser)
+	f.Get("/getUserAddress/:email", u.GetUserAddress)
 	f.Delete("/deleteUserByEmail/:email", u.DeleteUserByEmail)
 	//DI for order service
 	f.Post("/createOrder/:id", o.CreateOrder)
 	f.Get("/getUserOrders/:id", o.GetOrders)
+
 	group := f.Group("/product")
 	group.Post("/create", p.CreateProduct)
 	group.Get("/getAll", p.GetAllProduct)

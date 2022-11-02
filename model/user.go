@@ -9,12 +9,19 @@ type User struct {
 	Role     string             `json:"role"`
 	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Orders   Orders
+	Address  Address
+}
+type Address struct {
+	Il          string `json:"il"`
+	Ilce        string `json:"ilce"`
+	FullAddress string `json:"fullAddress"`
 }
 type UserDal struct {
-	ID    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name  string             `json:"name"`
-	Email string             `json:"email"`
-	Token string             `json:"token"`
+	ID      primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name    string             `json:"name"`
+	Email   string             `json:"email"`
+	Token   string             `json:"token"`
+	Address Address
 }
 
 type Authentication struct {
