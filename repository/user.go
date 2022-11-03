@@ -5,6 +5,7 @@ import (
 	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type IUserRepository interface {
@@ -15,6 +16,7 @@ type IUserRepository interface {
 	UpdateUserByEmail(ctx *fiber.Ctx, email string, user model.UserDal) (bool, string)
 	GetUserByEmailForAuth(ctx *fiber.Ctx, email string) model.User
 	GetUserAddress(ctx *fiber.Ctx, email string) model.Address
+	CreateAddress(ctx *fiber.Ctx, email string, address *model.Address) *mongo.UpdateResult
 }
 
 func (u UserCollection) GetUserAddress(ctx *fiber.Ctx, email string) model.Address {
@@ -91,4 +93,13 @@ func (u UserCollection) UpdateUserByEmail(ctx *fiber.Ctx, email string, user mod
 	}
 	return false, "user did not updated"
 
+}
+func (u UserCollection) CreateAddress(ctx *fiber.Ctx, email string, address *model.Address) *mongo.UpdateResult {
+	filter := bson.D{{"email", email}}
+	update := bson.D{{"$set", bson.D{{"address", address}}}}
+	updateOne, err := u.Collection.UpdateOne(ctx.Context(), filter, update)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return updateOne
 }

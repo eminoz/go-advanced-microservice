@@ -13,6 +13,7 @@ type IUserController interface {
 	SignIn(ctx *fiber.Ctx) error
 	GetAllUser(ctx *fiber.Ctx) error
 	GetUserAddress(ctx *fiber.Ctx) error
+	CreateAddress(ctx *fiber.Ctx) error
 }
 type UserController struct {
 	UserController service.IUserService
@@ -30,6 +31,10 @@ func (u UserController) SignIn(ctx *fiber.Ctx) error {
 	}
 	return ctx.JSON(in)
 
+}
+func (u UserController) CreateAddress(ctx *fiber.Ctx) error {
+	address := u.UserController.CreateAddress(ctx)
+	return ctx.JSON(address)
 }
 func (u UserController) GetUserAddress(ctx *fiber.Ctx) error {
 	address := u.UserController.GetUsersAddress(ctx)

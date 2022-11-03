@@ -29,7 +29,6 @@ func (c ProductCollection) GetAllProduct(ctx *fiber.Ctx) []model.ProductDal {
 	}
 	var p []model.ProductDal
 	err2 := find.All(ctx.Context(), &p)
-	fmt.Println(p)
 	if err2 != nil {
 		fmt.Println(err2)
 	}

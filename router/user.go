@@ -19,6 +19,7 @@ func Setup() *fiber.App {
 	f.Put("/updateUser/:email", security.IsAuth(), u.UpdatedUserByEmail)
 	f.Get("/getUserByEmail/:email", security.IsAuth(), u.GetUserByEmail)
 	f.Get("/getAllUser", u.GetAllUser)
+	f.Post("/createAddress/:email", u.CreateAddress)
 	f.Get("/getUserAddress/:email", u.GetUserAddress)
 	f.Delete("/deleteUserByEmail/:email", u.DeleteUserByEmail)
 	//DI for order service
