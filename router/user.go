@@ -17,7 +17,7 @@ func Setup() *fiber.App {
 	f.Post("/createUser", validation.UserValidation(), u.CreateUser)
 	f.Post("/signin", u.SignIn)
 	f.Put("/updateUser/:email", security.IsAuth(), u.UpdatedUserByEmail)
-	f.Get("/getUserByEmail/:email", security.IsAuth(), u.GetUserByEmail)
+	f.Get("/getUserByEmail/:email", u.GetUserByEmail)
 	f.Get("/getAllUser", u.GetAllUser)
 	f.Post("/createAddress/:email", u.CreateAddress)
 	f.Get("/getUserAddress/:email", u.GetUserAddress)

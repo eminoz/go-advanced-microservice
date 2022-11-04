@@ -21,6 +21,7 @@ type UserDal struct {
 	Name    string             `json:"name"`
 	Email   string             `json:"email"`
 	Token   string             `json:"token"`
+	Role    string             `json:"role"`
 	Address Address
 }
 

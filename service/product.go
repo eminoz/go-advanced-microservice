@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/eminoz/go-advanced-microservice/core/utilities"
 	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/eminoz/go-advanced-microservice/repository"
@@ -20,7 +21,9 @@ func NewProductService(p repository.IProductRepository) IProductService {
 }
 func (s ProductService) CreateProduct(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultOfErrorData) {
 	m := new(model.Product)
+
 	err := ctx.BodyParser(&m)
+	fmt.Println(m)
 	if err != nil {
 		return nil, utilities.ErrorDataResult("some got wrong", err)
 	}

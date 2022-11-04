@@ -12,6 +12,7 @@ func IsAuth() fiber.Handler {
 
 	return func(ctx *fiber.Ctx) error {
 		header := ctx.GetReqHeaders()["Token"]
+		fmt.Println(header)
 		if header == "" {
 			ctx.JSON(*utilities.ErrorResult("please sign in"))
 		}

@@ -7,14 +7,14 @@ type Orders struct {
 
 type Product struct {
 	ProductName string `json:"productName"`
-	Quantity    int32  `json:"quantity"`
+	Quantity    int64  `json:"quantity"`
 	Price       int64  `json:"price"`
 	Description string `json:"description"`
 }
 
 type ProductDal struct {
 	ProductName string `json:"productName"`
-	Quantity    int32  `json:"quantity"`
+	Quantity    int64  `json:"quantity"`
 	Price       int64  `json:"price"`
 	Description string `json:"description"`
 }

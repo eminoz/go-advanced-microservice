@@ -23,7 +23,6 @@ type IUserService interface {
 	GetUsersAddress(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
 	CreateAddress(ctx *fiber.Ctx) *utilities.ResultSuccess
 }
-
 type UserService struct {
 	UserRepository repository.IUserRepository
 	UserRedis      cache.IUserCache
@@ -94,9 +93,10 @@ func (u UserService) CreateAddress(ctx *fiber.Ctx) *utilities.ResultSuccess {
 	m := new(model.Address)
 	ctx.BodyParser(m)
 	email := ctx.Params("email")
+	fmt.Print(m)
 	u.UserRepository.CreateAddress(ctx, email, m)
 
-	return utilities.SuccessResult("adress updated")
+	return utilities.SuccessResult("address updated")
 }
 func (u UserService) GetUsersAddress(ctx *fiber.Ctx) *utilities.ResultOfSuccessData {
 	email := ctx.Params("email")
@@ -105,10 +105,6 @@ func (u UserService) GetUsersAddress(ctx *fiber.Ctx) *utilities.ResultOfSuccessD
 }
 func (u UserService) GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
 	email := ctx.Params("email")
-	userByEmail := u.UserRedis.GetUserByEmail(email)
-	if userByEmail.Email == email {
-		return utilities.SuccessDataResult("user found", userByEmail), nil
-	}
 	getUserByEmail := u.UserRepository.GetUserByEmail(ctx, email)
 	if getUserByEmail.Email == "" {
 		return nil, utilities.ErrorResult("user did not found")
