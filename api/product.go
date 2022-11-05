@@ -8,6 +8,7 @@ import (
 type IProductController interface {
 	CreateProduct(ctx *fiber.Ctx) error
 	GetAllProduct(ctx *fiber.Ctx) error
+	UpdateProductBProductName(ctx *fiber.Ctx) error
 }
 type ProductController struct {
 	ProductService service.IProductService
@@ -29,4 +30,11 @@ func (p ProductController) CreateProduct(ctx *fiber.Ctx) error {
 func (p ProductController) GetAllProduct(ctx *fiber.Ctx) error {
 	product := p.ProductService.GetAllProduct(ctx)
 	return ctx.JSON(product)
+}
+func (p ProductController) UpdateProductBProductName(ctx *fiber.Ctx) error {
+	email, resultError := p.ProductService.UpdateProductBProductName(ctx)
+	if resultError != nil {
+		return ctx.JSON(resultError)
+	}
+	return ctx.JSON(email)
 }
