@@ -12,6 +12,7 @@ type IProductRepository interface {
 	CreateProduct(ctx *fiber.Ctx, p *model.Product) model.Product
 	GetAllProduct(ctx *fiber.Ctx) []model.ProductDal
 	UpdateProductBProductName(ctx *fiber.Ctx, email string, p *model.Product) *mongo.UpdateResult
+	DeleteProduct(ctx *fiber.Ctx, productname string) bool
 }
 
 func (c ProductCollection) CreateProduct(ctx *fiber.Ctx, p *model.Product) model.Product {
@@ -44,4 +45,12 @@ func (c ProductCollection) GetAllProduct(ctx *fiber.Ctx) []model.ProductDal {
 		fmt.Println(err2)
 	}
 	return p
+}
+func (c ProductCollection) DeleteProduct(ctx *fiber.Ctx, productname string) bool {
+	filter := bson.D{{"productname", productname}}
+	one, _ := c.Collection.DeleteOne(ctx.Context(), filter)
+	if one.DeletedCount == 1 {
+		return true
+	}
+	return false
 }

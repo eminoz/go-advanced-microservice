@@ -142,7 +142,11 @@ func (u UserService) UpdateUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess
 	if m.Email == "" {
 		return nil, utilities.ErrorResult("user mustn't be empty")
 	}
-
+	userByEmail := u.UserRepository.GetUserByEmail(ctx, m.Email)
+	fmt.Println(userByEmail.Email)
+	if userByEmail.Email != "" {
+		return nil, utilities.ErrorResult("this email already exist")
+	}
 	byEmail, msg := u.UserRepository.UpdateUserByEmail(ctx, email, *m)
 	if byEmail {
 		fmt.Println(m)

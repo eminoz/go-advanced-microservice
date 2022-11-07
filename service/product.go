@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/eminoz/go-advanced-microservice/core/utilities"
 	"github.com/eminoz/go-advanced-microservice/model"
 	"github.com/eminoz/go-advanced-microservice/repository"
@@ -12,6 +11,7 @@ type IProductService interface {
 	CreateProduct(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultOfErrorData)
 	GetAllProduct(ctx *fiber.Ctx) *utilities.ResultOfSuccessData
 	UpdateProductBProductName(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
+	DeleteProduct(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError)
 }
 type ProductService struct {
 	ProductRepository repository.IProductRepository
@@ -35,7 +35,6 @@ func (s ProductService) UpdateProductBProductName(ctx *fiber.Ctx) (*utilities.Re
 	email := ctx.Params("productname")
 	m := new(model.Product)
 	ctx.BodyParser(&m)
-	fmt.Println(m)
 	updateProductByEmail := s.ProductRepository.UpdateProductBProductName(ctx, email, m)
 
 	if updateProductByEmail.ModifiedCount == 1 {
@@ -47,4 +46,13 @@ func (s ProductService) GetAllProduct(ctx *fiber.Ctx) *utilities.ResultOfSuccess
 	product := s.ProductRepository.GetAllProduct(ctx)
 	return utilities.SuccessDataResult("all product", product)
 
+}
+
+func (s ProductService) DeleteProduct(ctx *fiber.Ctx) (*utilities.ResultSuccess, *utilities.ResultError) {
+	productname := ctx.Params("productname")
+	product := s.ProductRepository.DeleteProduct(ctx, productname)
+	if product == true {
+		return utilities.SuccessResult("product deleted"), nil
+	}
+	return nil, utilities.ErrorResult("product did not deleted")
 }

@@ -9,6 +9,7 @@ type IProductController interface {
 	CreateProduct(ctx *fiber.Ctx) error
 	GetAllProduct(ctx *fiber.Ctx) error
 	UpdateProductBProductName(ctx *fiber.Ctx) error
+	DeleteProduct(ctx *fiber.Ctx) error
 }
 type ProductController struct {
 	ProductService service.IProductService
@@ -37,4 +38,11 @@ func (p ProductController) UpdateProductBProductName(ctx *fiber.Ctx) error {
 		return ctx.JSON(resultError)
 	}
 	return ctx.JSON(email)
+}
+func (p ProductController) DeleteProduct(ctx *fiber.Ctx) error {
+	product, resultError := p.ProductService.DeleteProduct(ctx)
+	if resultError != nil {
+		return ctx.JSON(resultError)
+	}
+	return ctx.JSON(product)
 }

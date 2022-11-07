@@ -30,6 +30,7 @@ func Setup() *fiber.App {
 
 	group.Post("/create", p.CreateProduct)
 	group.Post("/update/:productname", p.UpdateProductBProductName)
+	group.Delete("/delete/:productname", p.DeleteProduct)
 	group.Get("/getAll", p.GetAllProduct)
 	return f
 }
