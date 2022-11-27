@@ -93,7 +93,6 @@ func (u UserService) CreateAddress(ctx *fiber.Ctx) *utilities.ResultSuccess {
 	m := new(model.Address)
 	ctx.BodyParser(m)
 	email := ctx.Params("email")
-	fmt.Print(m)
 	u.UserRepository.CreateAddress(ctx, email, m)
 
 	return utilities.SuccessResult("address updated")
@@ -105,7 +104,9 @@ func (u UserService) GetUsersAddress(ctx *fiber.Ctx) *utilities.ResultOfSuccessD
 }
 func (u UserService) GetUserByEmail(ctx *fiber.Ctx) (*utilities.ResultOfSuccessData, *utilities.ResultError) {
 	email := ctx.Params("email")
+	fmt.Println(email)
 	getUserByEmail := u.UserRepository.GetUserByEmail(ctx, email)
+	fmt.Println("getUserByEmail ", getUserByEmail)
 	if getUserByEmail.Email == "" {
 		return nil, utilities.ErrorResult("user did not found")
 	}
@@ -143,13 +144,11 @@ func (u UserService) UpdateUserByEmail(ctx *fiber.Ctx) (*utilities.ResultSuccess
 		return nil, utilities.ErrorResult("user mustn't be empty")
 	}
 	userByEmail := u.UserRepository.GetUserByEmail(ctx, m.Email)
-	fmt.Println(userByEmail.Email)
-	if userByEmail.Email != "" {
+	if userByEmail.Email != m.Email {
 		return nil, utilities.ErrorResult("this email already exist")
 	}
 	byEmail, msg := u.UserRepository.UpdateUserByEmail(ctx, email, *m)
 	if byEmail {
-		fmt.Println(m)
 		u.UserRedis.SaveUserByEmail(*m) //updated user in redis
 		return utilities.SuccessResult(msg), nil
 	}

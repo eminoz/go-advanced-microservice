@@ -16,8 +16,8 @@ func Setup() *fiber.App {
 	var p = userDI.ProductDI()
 	f.Post("/createUser", validation.UserValidation(), u.CreateUser)
 	f.Post("/signin", u.SignIn)
-	f.Put("/updateUser/:email", security.IsAuth(), u.UpdatedUserByEmail)
-	f.Get("/getUserByEmail/:email", u.GetUserByEmail)
+	f.Put("/updateUser/:email", security.UserIsAuth(), u.UpdatedUserByEmail)
+	f.Get("/getUserByEmail/:email", security.UserIsAuth(), u.GetUserByEmail)
 	f.Get("/getAllUser", u.GetAllUser)
 	f.Post("/createAddress/:email", u.CreateAddress)
 	f.Get("/getUserAddress/:email", u.GetUserAddress)
@@ -28,9 +28,9 @@ func Setup() *fiber.App {
 
 	group := f.Group("/product")
 
-	group.Post("/create", p.CreateProduct)
-	group.Post("/update/:productname", p.UpdateProductBProductName)
-	group.Delete("/delete/:productname", p.DeleteProduct)
+	group.Post("/create", security.AdminIsAuth(), p.CreateProduct)
+	group.Post("/update/:productname", security.AdminIsAuth(), p.UpdateProductBProductName)
+	group.Delete("/delete/:productname", security.AdminIsAuth(), p.DeleteProduct)
 	group.Get("/getAll", p.GetAllProduct)
 	return f
 }

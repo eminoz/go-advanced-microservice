@@ -27,9 +27,8 @@ func (a Auth) GenerateJWT(email string, role string) (string, error) {
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
 	tokenString, err := token.SignedString(mySigningKey)
-
 	if err != nil {
-		fmt.Errorf("Something Went Wrong: %s", err.Error())
+		fmt.Errorf(err.Error())
 		return "", err
 	}
 	return tokenString, nil
